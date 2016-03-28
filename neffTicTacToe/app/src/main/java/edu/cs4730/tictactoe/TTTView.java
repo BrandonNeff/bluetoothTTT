@@ -1,14 +1,12 @@
 /*Brandon Neff
- *Project 5 - Tic Tac Toe
- *COSC 4730
+ *Project 3 - Bluetooth Tic Tac Toe
+ *COSC 4735 or 4010
  */
 package edu.cs4730.tictactoe;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,12 +17,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.text.DateFormat;
-import java.util.Date;
 
 
 public class TTTView extends View {
@@ -35,10 +27,12 @@ public class TTTView extends View {
 	int	XorO=0, Xwins = 0, Owins = 0;
 	int mheight =0, mwidth =0;
 	int leftside, rightside, boardwidth;
+    final int[][] btboard = new int[][]{{1,2,3},{4,5,6},{7,8,9}};
 	public int board[][];
     public Rect myXRect = new Rect();
     public Rect myORect = new Rect();
     public Context myContext;
+    TTT_Fragment TTTfrag = new TTT_Fragment();
     String Xplayer = "X player's";
     String Oplayer = "O player's";
 
@@ -88,6 +82,7 @@ public class TTTView extends View {
 
 		if (board != null) { board = null; }
 		board = new int[size][size];
+
 		for(int i=0; i<size; i++) {
 			for (int j=0; j<size; j++) {
 				board[i][j] =Color.BLACK;
@@ -101,7 +96,7 @@ public class TTTView extends View {
 	 * Setups up the default sizes of the screen so the board fits
 	 */
 	public void setsizes() {
-		incr = mwidth /(size +2);  //give a margin.
+		incr = (mwidth /(size +2));  //give a margin.
 		leftside = incr -1;
 		rightside = incr*9;
 		boardwidth = incr * size;
@@ -164,29 +159,34 @@ public class TTTView extends View {
 
         for (int i = 0; i<size; i++) {
             //checks for wins horizontally
-            if (board[0][i] == 1 && board[1][i] == 1 && board[2][i] == 1)
+            if (board[0][i] == 1 && board[1][i] == 1 && board[2][i] == 1) {
                 Xwin = true;
-            else if (board[0][i] == 2 && board[1][i] == 2 && board[2][i] == 2)
+            } else if (board[0][i] == 2 && board[1][i] == 2 && board[2][i] == 2) {
                 Owin = true;
+            }
             //checks for wins vertically
-            if (board[i][0] == 1 && board[i][1] == 1 && board[i][2] == 1)
+            if (board[i][0] == 1 && board[i][1] == 1 && board[i][2] == 1) {
                 Xwin = true;
-            else if (board[i][0] == 2 && board[i][1] == 2 && board[i][2] == 2)
+            } else if (board[i][0] == 2 && board[i][1] == 2 && board[i][2] == 2){
                 Owin = true;
+            }
             //checks for wins diagonally
-            if (board[0][0] == 1 && board[1][1] == 1 && board[2][2] == 1)
+            if (board[0][0] == 1 && board[1][1] == 1 && board[2][2] == 1) {
                 Xwin = true;
-            else if (board[0][0] == 2 && board[1][1] == 2 && board[2][2] == 2)
+            } else if (board[0][0] == 2 && board[1][1] == 2 && board[2][2] == 2){
                 Owin = true;
-            if (board[2][0] == 1 && board[1][1] == 1 && board[0][2] == 1)
+            }
+            if (board[2][0] == 1 && board[1][1] == 1 && board[0][2] == 1) {
                 Xwin = true;
-            else if (board[2][0] == 2 && board[1][1] == 2 && board[0][2] == 2)
+            } else if (board[2][0] == 2 && board[1][1] == 2 && board[0][2] == 2) {
                 Owin = true;
+            }
         }
 
         if (Xwin == true || Owin == true) {
             AlertDialog.Builder alert = new AlertDialog.Builder(myContext);
             if (Xwin == true) {
+                TTTfrag.setWin(1);
                 Xwins++;
                 if (Xplayer == "X player's")
                     alert.setMessage("X wins!");
@@ -194,6 +194,7 @@ public class TTTView extends View {
                     alert.setMessage("Eagles win!");
             }
             else {
+                TTTfrag.setWin(2);
                 Owins++;
                 if (Oplayer == "O player's")
                     alert.setMessage("O wins!");
@@ -222,51 +223,35 @@ public class TTTView extends View {
         super.onDraw(canvas);
 
 		int x = incr;
-        int y = incr;
+        int y = incr + 175;
 
 		canvas.drawColor(Color.WHITE);
 
-        if (XorO%2 == 0 && Xwin == false && Owin == false && XorO < 9) {
-            canvas.save();
-            canvas.scale(5, 5);
-            canvas.drawText(Xplayer + " turn", 26, 10, black);
-            canvas.restore();
-        }
-        else if (XorO%2 != 0 && Xwin == false && Owin == false && XorO < 9) {
-            canvas.save();
-            canvas.scale(5, 5);
-            canvas.drawText(Oplayer + " turn", 26, 10, black);
-            canvas.restore();
-        }
-        else{
-            canvas.save();
-            canvas.scale(5, 5);
-            canvas.drawText("Game Over", 33, 10, black);
-            canvas.restore();
-        }
-
 		//draws squares across, then down
-		for (int yi = 0; yi<size; yi++) {
-			for (int xi =0; xi<size; xi++) {
+        for (int yi = 0; yi<size; yi++) {
+            for (int xi =0; xi<size; xi++) {
                 canvas.drawRect(x, y, x + incr, y + incr, black);  //draw black box.
                 //draws x
                 if (board[xi][yi] == 1) {
                     myXRect.set(x, y, x + incr, y + incr);
                     Log.i("onDraw", "Drawing X");
+                    Log.i("Set X Placement", xi + ", " + yi);
                     canvas.drawBitmap(X, null, myXRect, black);
                 }
                 //draws o
                 else if (board[xi][yi] == 2) {
                     myORect.set(x, y, x + incr, y + incr);
                     Log.i("onDraw", "Drawing O");
+                    Log.i("Set O Placement", xi + ", " + yi);
                     canvas.drawBitmap(O, null, myORect, black);
                 }
 				x+=incr; //move to next square across
-			}
-			x = incr;
+            }
+            x = incr;
 			y += incr;
 		}
 		if (XorO == 9 && Xwin == false && Owin == false){
+            TTTfrag.setWin(3);
 			AlertDialog.Builder alert = new AlertDialog.Builder(myContext);
 			alert.setMessage("CAT game! The game ended in a draw.");
 			alert.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
@@ -280,39 +265,44 @@ public class TTTView extends View {
 			});
 			alert.show();
 		}
-        canvas.save();
-        canvas.scale(5, 5);
-        canvas.drawText(Xplayer + " wins = " + Xwins, 16, 145, black);
-        canvas.restore();
-        canvas.save();
-        canvas.scale(5, 5);
-        canvas.drawText(Oplayer + " wins= " + Owins, 16, 155, black);
-        canvas.restore();
-        if (Xplayer != "X player's" || Oplayer != "O player's")
-            canvas.drawText("Tilt to reset game/X or O", 510, 950, black);
 	}
-	
+
+    /*
+	 * places opponent character in correct location
+	 */
+    void btTTT(int placeXO, String whichXO) {
+        for (int y = 0; y<size; y++){
+            for (int x = 0; x<size; x++) {
+                if (board[y][x] != 1 && board[y][x] != 2) {
+                    Log.i("place given: " + placeXO, "Bluetooth board: " + btboard[x][y]);
+                    if (placeXO == btboard[x][y] && whichXO.equals("X")) {
+                        board[y][x] = 1;
+                        XorO++;
+                    }
+                    else if (placeXO == btboard[x][y] && whichXO.equals("O")) {
+                        board[y][x] = 2;
+                        XorO++;
+                    }
+                }
+            }
+        }
+    }
+
 	/*
 	 * used by the ontouch event to figure out which box (if any) was "touched"
 	 */
     boolean where(int x, int y) {
         int cx, cy;
         if ((y>= leftside && y<rightside && x>= leftside && x<rightside)){
-            y-=incr; x-=incr; //simplifies the math here.
+            y-=(incr + 175); x-=incr; //simplifies the math here.
             cx = x/incr;
             cy = y/incr;
             if (cx <size && cy <size) {
-                if (XorO%2 == 0 && board[cx][cy] != 1 && board[cx][cy] != 2) {
-                    Log.i("onDraw", "Board = X");
-                    if (Xwin == false && Owin == false)
-                        board[cx][cy] = 1;
-                    winner();
-                }
-                else if (XorO%2 != 0 && board[cx][cy] != 1 && board[cx][cy] != 2) {
-                    Log.i("onDraw", "Board = O");
-                    if (Xwin == false && Owin == false)
-                        board[cx][cy] = 2;
-                    winner();
+                if (board[cx][cy] != 1 && board[cx][cy] != 2) {
+                    Log.i("onDraw", "Board = " + cx + ", " + cy);
+                    if (Xwin == false && Owin == false) {
+                        TTTfrag.setPlacement(cx,cy);
+                    }
                 }
                 else
                     XorO--;
@@ -336,15 +326,12 @@ public class TTTView extends View {
         int x = (int) event.getX();
         int y = (int) event.getY();
 
-        switch (action) {
-        case MotionEvent.ACTION_DOWN:
-            Log.i("onTouchEvent", "Action_down");
-            boolean onBoard;
-			onBoard = where(x, y);
-            if (onBoard == true)
-			    XorO++;
-			invalidate();
-            break;
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i("onTouchEvent", "Action_down");
+                    where(x, y);
+                    break;
+
         }
         return true;
     }
