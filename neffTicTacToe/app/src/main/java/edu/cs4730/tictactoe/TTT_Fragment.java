@@ -49,6 +49,9 @@ public class TTT_Fragment extends Fragment{
     TTTView tttv;
     int clientLoc = 0, serverLoc = 0;
     static volatile int nowinner = 0;
+=======
+    boolean backAgreement, nowinner;
+>>>>>>> origin/master
 
     public TTT_Fragment() {
         setHasOptionsMenu(true);
@@ -77,6 +80,9 @@ public class TTT_Fragment extends Fragment{
             public void onClick(View v) {
                 startClient();
                 //btn_client.setBackgroundColor(0x123456);
+=======
+                btn_client.setBackgroundColor(0x123456);
+>>>>>>> origin/master
                 btn_server.setEnabled(false);
                 btn_client.setEnabled(false);
                 btn_device.setEnabled(false);
@@ -88,6 +94,9 @@ public class TTT_Fragment extends Fragment{
             public void onClick(View v) {
                 startServer();
                 //btn_server.setBackgroundColor(0x123456);
+=======
+                btn_server.setBackgroundColor(0x123456);
+>>>>>>> origin/master
                 btn_server.setEnabled(false);
                 btn_client.setEnabled(false);
                 btn_device.setEnabled(false);
@@ -110,6 +119,14 @@ public class TTT_Fragment extends Fragment{
         switch (item.getItemId()) {
             case R.id.reset:
                 tttv.clearBoard();
+=======
+                btn_server.setEnabled(true);
+                btn_client.setEnabled(true);
+                btn_device.setEnabled(true);
+                AcceptThread.dumpStack();
+                ConnectThread.dumpStack();
+                startbt();
+>>>>>>> origin/master
                 return true;
             case R.id.changeX:
                 tttv.changeX();
@@ -125,6 +142,11 @@ public class TTT_Fragment extends Fragment{
         return false;
     }
 
+=======
+    public void setBackAgreement(boolean agreement){
+        backAgreement = agreement;
+    }
+>>>>>>> origin/master
     //This code will check to see if there is a bluetooth device and
     //turn it on if is it turned off.
     public void startbt() {
@@ -167,6 +189,8 @@ public class TTT_Fragment extends Fragment{
                         Log.i("Handling:", serverChar + " placed at: " + clientLoc);
                         tttv.btTTT(clientLoc, serverChar);
                         tttv.winner();
+=======
+>>>>>>> origin/master
                         tttv.invalidate();
                     }
                     clientLoc = 0;
@@ -190,6 +214,11 @@ public class TTT_Fragment extends Fragment{
                 } else {
                     tttv.btTTT(serverLoc, clientChar);
                     tttv.winner();
+=======
+                    tttv.invalidate();
+                } else {
+                    tttv.btTTT(serverLoc, clientChar);
+>>>>>>> origin/master
                     tttv.invalidate();
                 }
             }
@@ -203,7 +232,6 @@ public class TTT_Fragment extends Fragment{
     }
 
     public String getWin(){
-        //tttv.winner();
         if (nowinner == 1)
             return "winner";
         else if (nowinner == 2)
@@ -214,6 +242,12 @@ public class TTT_Fragment extends Fragment{
             return "nowinner";
     }
 
+=======
+    public void nowin (boolean setter){
+        nowinner = setter;
+    }
+
+>>>>>>> origin/master
     public void mkmsg(String str) {
         Log.i("Make message", str);
         if (str.equals("received a message:\n1\n")){
@@ -356,6 +390,9 @@ public class TTT_Fragment extends Fragment{
     public class ConnectThread extends Thread {
         private BluetoothSocket socket;
         private int count = 0;
+=======
+        private int count = 1;
+>>>>>>> origin/master
 
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
@@ -415,6 +452,9 @@ public class TTT_Fragment extends Fragment{
                             mkmsg("They go first...\n");
                             clientConnect = true;
                         } else if (str.equals("Player O")) {
+=======
+                            //flipClickable(false);
+>>>>>>> origin/master
                             clientChar = "X";
                             serverChar = "O";
                             mkmsg("Attempting to send message ...\n");
@@ -426,6 +466,10 @@ public class TTT_Fragment extends Fragment{
                                 move = getMove(count);
                             }
                             count++;
+=======
+                                move = getMove(0);
+                            }
+>>>>>>> origin/master
                             place = getPlacement();
                             mkmsg("Attempting to send move: \n" + place);
                             myMove(place);
@@ -438,13 +482,18 @@ public class TTT_Fragment extends Fragment{
                         }
                     }
                     while (!gameOver) {
+//
                         BufferedReader in1 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+=======
+                        //BufferedReader in1 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+>>>>>>> origin/master
                         //String str1;
                         //PrintWriter out1 = new PrintWriter( new BufferedWriter( new OutputStreamWriter(socket.getOutputStream())),true);
                         boolean tempmove = false;
                         str = in.readLine();
                         if (str.equals("agree")) {
                             mkmsg("Server agrees:\n");
+//
                             if (getWin().equals("nowinner")) {
                                 mkmsg("NOWINNER\n");
                                 out.println("nowinner");
@@ -461,19 +510,25 @@ public class TTT_Fragment extends Fragment{
                                 out.flush();
                                 in1.readLine();
                             }
+=======
+>>>>>>> origin/master
                             str = in.readLine();
                             mkmsg("received a message:\n" + str + "\n");
                             mkmsg("Attempting to send agreement ...\n");
                             out.println("agree");
                             out.flush();
+//
                             in1.readLine();
                             out.println("agree");
                             out.flush();
+=======
+>>>>>>> origin/master
                         } else {
                             mkmsg("received a message:\n" + str + "\n");
                             mkmsg("Attempting to send agreement ...\n");
                             out.println("agree");
                             out.flush();
+//
                             in1.readLine();
                             out.println("agree");
                             out.flush();
@@ -481,6 +536,17 @@ public class TTT_Fragment extends Fragment{
                         while (tempmove == false) {
                             //waiting to select move
                             tempmove = getMove(count);
+=======
+                        }
+                        //flipClickable(false);
+                        while (tempmove == false) {
+                            //waiting to select move
+                            sleep(500);
+                            if (serverChar.equals("X"))
+                                tempmove = getMove(count-1);
+                            else
+                                tempmove = getMove(count);
+>>>>>>> origin/master
                         }
                         place = getPlacement();
                         Log.i("C2Place: ", place);
@@ -549,7 +615,11 @@ public class TTT_Fragment extends Fragment{
     public class AcceptThread extends Thread {
         // The local server socket
         private final BluetoothServerSocket mmServerSocket;
+//
         private int count = 0;
+=======
+        private int count = 1;
+>>>>>>> origin/master
 
         public AcceptThread() {
             BluetoothServerSocket tmp = null;
@@ -585,6 +655,10 @@ public class TTT_Fragment extends Fragment{
                     PrintWriter out = new PrintWriter( new BufferedWriter( new OutputStreamWriter(socket.getOutputStream())),true);
                     if (xo) {
                         whoseTurn = true;
+//
+=======
+                        //flipClickable(false);
+>>>>>>> origin/master
                         serverChar = "X";
                         clientChar = "O";
                         mkmsg("Attempting to be Player X...\n");
@@ -605,9 +679,14 @@ public class TTT_Fragment extends Fragment{
                     if (str.equals("agree") && serverChar.equals("X")) {
                         while (move == false) {
                             //waiting to select move
+//
                             move = getMove(count);
                         }
                         count++;
+=======
+                            move = getMove(0);
+                        }
+>>>>>>> origin/master
                         place = getPlacement();
                         mkmsg("Attempting to send move: \n" + place);
                         myMove(place);
@@ -617,13 +696,16 @@ public class TTT_Fragment extends Fragment{
                     }
                     while (!gameOver) {
                         BufferedReader in1 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+=======
+                        //BufferedReader in1 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+>>>>>>> origin/master
                         //String str1;
                         //PrintWriter out1 = new PrintWriter( new BufferedWriter( new OutputStreamWriter(socket.getOutputStream())),true);
                         boolean tempmove = false;
                         mkmsg("Attempting to receive another message ...\n");
                         str = in.readLine();
                         if (str.equals("agree")) {
-                            mkmsg("Client agrees...\n");
+                            mkmsg("Client agrees.\n");
                             if (getWin().equals("nowinner")) {
                                 out.println("nowinner");
                                 out.flush();
@@ -637,6 +719,11 @@ public class TTT_Fragment extends Fragment{
                                 out.flush();
                                 in1.readLine();
                             }
+=======
+                            //out.println("nowinner");
+                            //out.flush();
+                            //in.readLine();
+>>>>>>> origin/master
                             str = in.readLine();
                             mkmsg("received a message:\n" + str + "\n");
                             mkmsg("Attempting to send agreement ...\n");
@@ -645,19 +732,30 @@ public class TTT_Fragment extends Fragment{
                             in1.readLine();
                             out.println("agree");
                             out.flush();
+=======
+>>>>>>> origin/master
                         } else {
                             mkmsg("received a message:\n" + str + "\n");
                             mkmsg("Attempting to send agreement ...\n");
                             out.println("agree");
-                            out.flush();
+                         out.flush();
                             in1.readLine();
                             out.println("agree");
                             out.flush();
+=======
+>>>>>>> origin/master
                         }
                         //flipClickable(false);
                         while (tempmove == false) {
-                            //waiting to select move
+                      //waiting to select move
                             tempmove = getMove(count);
+=======
+                            sleep(500);
+                            if (serverChar.equals("O"))
+                                tempmove = getMove(count-1);
+                            else
+                                tempmove = getMove(count);
+>>>>>>> origin/master
                         }
                         place = getPlacement();
                         mkmsg("Attempting to send move: \n" + place);

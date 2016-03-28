@@ -181,6 +181,27 @@ public class TTTView extends View {
             } else if (board[2][0] == 2 && board[1][1] == 2 && board[0][2] == 2) {
                 Owin = true;
             }
+=======
+            if (board[0][i] == 1 && board[1][i] == 1 && board[2][i] == 1)
+                Xwin = true;
+            else if (board[0][i] == 2 && board[1][i] == 2 && board[2][i] == 2)
+                Owin = true;
+            //checks for wins vertically
+            if (board[i][0] == 1 && board[i][1] == 1 && board[i][2] == 1)
+                Xwin = true;
+            else if (board[i][0] == 2 && board[i][1] == 2 && board[i][2] == 2)
+                Owin = true;
+            //checks for wins diagonally
+            if (board[0][0] == 1 && board[1][1] == 1 && board[2][2] == 1)
+                Xwin = true;
+            else if (board[0][0] == 2 && board[1][1] == 2 && board[2][2] == 2)
+                Owin = true;
+            if (board[2][0] == 1 && board[1][1] == 1 && board[0][2] == 1)
+                Xwin = true;
+            else if (board[2][0] == 2 && board[1][1] == 2 && board[0][2] == 2)
+                Owin = true;
+            else
+                TTTfrag.nowin(true);
         }
 
         if (Xwin == true || Owin == true) {
@@ -195,6 +216,8 @@ public class TTTView extends View {
             }
             else {
                 TTTfrag.setWin(2);
+=======
+>>>>>>> origin/master
                 Owins++;
                 if (Oplayer == "O player's")
                     alert.setMessage("O wins!");
@@ -252,6 +275,8 @@ public class TTTView extends View {
 		}
 		if (XorO == 9 && Xwin == false && Owin == false){
             TTTfrag.setWin(3);
+=======
+>>>>>>> origin/master
 			AlertDialog.Builder alert = new AlertDialog.Builder(myContext);
 			alert.setMessage("CAT game! The game ended in a draw.");
 			alert.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
@@ -286,6 +311,9 @@ public class TTTView extends View {
                 }
             }
         }
+        //invalidate();
+        winner();
+>>>>>>> origin/master
     }
 
 	/*
@@ -303,6 +331,15 @@ public class TTTView extends View {
                     if (Xwin == false && Owin == false) {
                         TTTfrag.setPlacement(cx,cy);
                     }
+=======
+                if (XorO%2 == 0 && board[cx][cy] != 1 && board[cx][cy] != 2) {
+                    Log.i("onDraw", "Board = X");
+                    if (Xwin == false && Owin == false) {
+                        //board[cx][cy] = 1;
+                        TTTfrag.setPlacement(cx,cy);
+                    }
+                    winner();
+>>>>>>> origin/master
                 }
                 else
                     XorO--;
@@ -330,6 +367,13 @@ public class TTTView extends View {
                 case MotionEvent.ACTION_DOWN:
                     Log.i("onTouchEvent", "Action_down");
                     where(x, y);
+=======
+                    boolean onBoard;
+                    onBoard = where(x, y);
+                    if (onBoard) {
+
+                    }
+>>>>>>> origin/master
                     break;
 
         }
