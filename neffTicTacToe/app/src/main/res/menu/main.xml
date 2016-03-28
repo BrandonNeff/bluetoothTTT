@@ -13,8 +13,8 @@
         android:orderInCategory="3"
         android:title="Change to bad O"/>
     <item
-        android:id="@+id/btConnect"
-        android:orderInCategory="4"
-        android:title="Bluetooth Connect"/>
+        android:id="@+id/resetBT"
+        android:orderInCategory="3"
+        android:title="Reset BT buttons"/>
 
 </menu>
